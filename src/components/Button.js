@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 
-
 const Button = ({name, handleClick}) => {
     return (
         <div>
