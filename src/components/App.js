@@ -67,31 +67,32 @@ export default class App extends Component {
         total = calculate({total, next, operation}, buttonName);
         operation = "";
         return this.setState({...this.state, next: next, total: total, operation: operation});
-      } else if (buttonName === "AC") {
+      } else if (total === "0" && next === "" && operation === ""
+       && (buttonName === "+" || buttonName === "-" || buttonName === "x" || buttonName === "/")) {
+        console.log(`Total === 0 is handled here!!`);
+        return this.setState({...this.state, next: next, total:total, operation: operation}); // Handling total=0 && operation
+      } else if (total === "0" && next === "" && operation === "" && buttonName === "AC") {
+        return this.setState({...this.state}); //Handling total=0 || total !== "" && "AC"; return the current state
+      } else if (total !== "" && next === "" && operation === "" && buttonName === "AC") {
         total = "0";
-        operation = "";
-        return this.setState({...this.state, next: next, total:total, operation: operation});
-      } else if ((total !== "") && next === "" && operation === ""
-        && (buttonName === "+" || buttonName === "-" || buttonName === "x" || buttonName === "/")) {
-        console.log(`Yes I am here!!`);
-        operation = buttonName;
-        return this.setState({...this.state, next: next, total:total, operation: operation});
+        return this.setState({...this.state, total: total}); // Handling total !== "" && "AC" 
       } else if (total !== "" && next === "" && operation === "" && buttonName === ".") { // Handling total= 0 && "."
         next = "0.";
         total = "";
         return this.setState({...this.state, next: next, total: total, operation: operation});
-      } else
+      } else if ((total !== "" && next === "" && operation === "")
+      && (buttonName === "+" || buttonName === "-" || buttonName === "x" || buttonName === "/" )) { // Added this block
+      console.log(`I am here! please correct me!!`);
+      operation = buttonName;
+      //total = "";
+      return this.setState({...this.state, next: next, total: total, operation: operation});
+     }
         console.log(`I am returning this button as next`);
         total = "";
         next = buttonName;
         operation = "";
         return this.setState({...this.state, next: next, total: total, operation: operation});
-     } else if ((total !== "" && next === "" && operation === "")
-      && (buttonName !== "+" || buttonName !== "-" || buttonName !== "x" || buttonName !== "/" )) { // Added this block
-      next = buttonName;
-      total = "";
-      return this.setState({...this.state, next: next, total: total, operation: operation});
-     } else if ((total !== null && next !== null && operation !== null) // Added this line
+     }  else if ((total !== null && next !== null && operation !== null) // Added this line
       && (buttonName === "+" || buttonName === "-" || buttonName === "x" || buttonName === "/")) {
       total = total + next;
       next = "";
