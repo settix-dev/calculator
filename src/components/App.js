@@ -3,15 +3,6 @@ import "../App.css";
 import ButtonPanel from "./ButtonPanel";
 import Display from "./Display";
 import calculate from "../logic/calculate";
-import operate from "../logic/operate";
-
-// static data
-let data = { total: 7, next: "10", operation: "-" };
-let buttonName = "-";
-const calculateTest = calculate(data, buttonName);
-console.log(calculateTest);
-
-console.log(operate(5, 7, "+"));
 
 export default class App extends Component {
   constructor(props) {
@@ -28,359 +19,148 @@ export default class App extends Component {
 
   handleClick(buttonName) {
     let { total, next, operation } = this.state;
-    const regexpClickedButton = /\d/;
+    const regexpClickedDigit = /\d/;
     const regexClickedAC = /^A\w\b/;
-    const digitButton = buttonName.match(regexpClickedButton);
+    const digitButton = buttonName.match(regexpClickedDigit);
     const acButton = buttonName.match(regexClickedAC);
     const symbolButton = !digitButton && !acButton ? buttonName : null;
 
-    if (digitButton) {
-      console.log(`Clicked Digit Button: ${digitButton}`);
-    } else if (acButton) {
+    if (acButton) {
       console.log(`Clicked AC Button: ${acButton}`);
-    } else {
-      console.log(`Clicked symbol Button: ${symbolButton}`);
-    }
-
-    if (
-      ((operation === "+" &&
-        (buttonName === "+" ||
-          buttonName === "-" ||
-          buttonName === "x" ||
-          buttonName === "/")) ||
-        (operation === "-" &&
-          (buttonName === "+" ||
-            buttonName === "-" ||
-            buttonName === "x" ||
-            buttonName === "/")) ||
-        (operation === "x" &&
-          (buttonName === "+" ||
-            buttonName === "-" ||
-            buttonName === "x" ||
-            buttonName === "/")) ||
-        (operation === "/" &&
-          (buttonName === "+" ||
-            buttonName === "-" ||
-            buttonName === "x" ||
-            buttonName === "/"))) &&
-      next !== ""
-    ) {
-      console.log("I am here!");
-      total = calculate({ total, next, operation }, operation);
-      console.log("Total is evaluated! Total = " + total);
-      next = "";
-      operation = buttonName;
-      console.log("I have also reached here!");
-      return this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    }
-    if (total !== "" && next === "" && operation !== "" && buttonName === ".") {
-      console.log(`Am I really here?`);
-      next = "0.";
-      return this.setState({ ...this.state, next: next }); // Returns this.state.next="0."
-    }
-    if (
-      total !== "" &&
-      next === "" &&
-      operation !== "" &&
-      (buttonName === "+" ||
-        buttonName === "-" ||
-        buttonName === "x" ||
-        buttonName === "/" ||
-        buttonName === "=")
-    ) {
-      console.log(`I am currently here`);
-      return this.setState({
-        ...this,
-        next: next,
-        total: total,
-        operation: operation,
-      }); // Return the current state
-    }
-    if (
-      total !== "" &&
-      next === "" &&
-      operation === "" &&
-      (buttonName !== "+" ||
-        buttonName !== "-" ||
-        buttonName !== "x" ||
-        buttonName !== "/")
-    ) {
-      // Added this block also
-      console.log(`I am in this block`);
-      if (buttonName === "%") {
-        operation = buttonName;
-        total = calculate({ total, next, operation }, operation);
-        operation = "";
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      if (buttonName === "+/-") {
-        operation = buttonName;
-        total = calculate({ total, next, operation }, buttonName);
-        operation = "";
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      if (buttonName === "AC") {
-        total = "0";
-        operation = "";
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      if (
-        total !== "" &&
-        next === "" &&
-        operation === "" &&
-        (buttonName === "+" ||
-          buttonName === "-" ||
-          buttonName === "x" ||
-          buttonName === "/")
-      ) {
-        console.log(`Yes I am here!!`);
-        operation = buttonName;
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      if (
-        total !== "" &&
-        next === "" &&
-        operation === "" &&
-        buttonName === "."
-      ) {
-        // Handling total= 0 && "."
-        next = "0.";
-        total = "";
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      console.log(`I am returning this button as next`);
-      total = "";
-      next = buttonName;
-      operation = "";
-      return this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    } else if (
-      total !== "" &&
-      next === "" &&
-      operation === "" &&
-      (buttonName !== "+" ||
-        buttonName !== "-" ||
-        buttonName !== "x" ||
-        buttonName !== "/")
-    ) {
-      // Added this block
-      next = buttonName;
-      total = "";
-      return this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    } else if (
-      total !== null &&
-      next !== null &&
-      operation !== null && // Added this line
-      (buttonName === "+" ||
-        buttonName === "-" ||
-        buttonName === "x" ||
-        buttonName === "/")
-    ) {
-      total = total + next;
-      next = "";
-      operation = buttonName;
-      console.log(`operation = ${operation}`);
-
-      this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    } else if (
-      total === null &&
-      next === null &&
-      operation === null && // Handling "." at the start of the application
-      buttonName === "."
-    ) {
-      console.log(`I am dealing with "."`);
-      next = "0.";
-      total = "";
-      operation = "";
-      return this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    } else if (
-      total === null &&
-      next === null &&
-      operation === null && // Added this line
-      (buttonName === "+" ||
-        buttonName === "-" ||
-        buttonName === "x" ||
-        buttonName === "/" ||
-        buttonName === "+/-" ||
-        buttonName === "%" ||
-        buttonName === "AC" ||
-        buttonName === "=")
-    ) {
-      console.log(buttonName + " is clicked");
-      console.log(`operation = ${operation}`);
-      this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      }); // return the current state
-    } else if (buttonName === "%") {
-      if (total === "" && operation === "" && next !== "") {
-        total = next;
-        operation = buttonName;
-        total = calculate({ total, next, operation }, operation);
-        operation = "";
-        next = "";
-        console.log(`total = ${total} I have seen you here`);
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      //  if (total !== "" && next === "" && operation !== "" && buttonName !== "%") {
-      //    console.log(`I am executed!`);
-      //    next = buttonName;
-      //    return this.setState({...this.state, next: next});
-      //  }
-      //  if (total !== "" && next !== "" && operation !== "" && buttonName !== "%") {
-      //    next = next + buttonName;
-      //    console.log(`We are here!`)
-      //    return this.setState({...this.state, next: next});
-      //  }
-      if (total !== "" && next !== "" && operation !== "") {
-        total = next;
-        console.log(`The state total is ${this.state.total}`);
-        operation = buttonName;
-        next = calculate({ total, next, operation }, operation);
-        console.log(`Next = ${next}`);
-        return this.setState({ ...this.state, next: next });
-      }
-      if (total !== "" && next === "" && operation !== "") {
-        console.log(`checked in here!`);
+      if (total === null && next === null && operation === null) {
         return this.setState({ ...this.state });
-      }
-      console.log(`I am right here`);
-      total = next;
-      next = "";
-      operation = buttonName;
-      total = calculate({ total, next, operation }, operation);
-      console.log(`I have left calculate.`);
-      // next = "";
-      operation = "";
-      return this.setState({
-        ...this.state,
-        next: next,
-        total: total,
-        operation: operation,
-      });
-    } else if (buttonName === "=") {
-      console.log(`Clicked: ${buttonName} button`);
-      console.log(calculate({ total, next, operation }, operation));
-
-      return this.setState({
-        ...this.state,
-        next: "",
-        total: calculate({ total, next, operation }, operation),
-        operation: "",
-      });
-    } else if (buttonName === "+/-") {
-      if (
-        total !== "" &&
-        operation !== "" &&
-        next === "" &&
-        buttonName === "+/-"
-      ) {
-        return this.setState({
-          ...this.state,
-          next: next,
-          total: total,
-          operation: operation,
-        });
-      }
-      if (
-        total !== "" &&
-        operation !== "" &&
-        next !== "" &&
-        buttonName === "+/-"
-      ) {
-        total = next; // We use the current next(second operand) as total in calculate method below
-        operation = buttonName;
-        next = calculate({ total, next, operation }, buttonName);
-
-        return this.setState({ ...this.state, next: next });
-      } else if (
-        total === null &&
-        next === null &&
-        operation === null &&
-        buttonName === "+/-"
-      ) {
-        // Added this line
-        // return this.setState({...this.state});
       } else {
-        console.log(`Clicked: ${buttonName}`);
-        console.log(calculate({ total, next, buttonName }, buttonName));
-
         return this.setState({
           ...this.state,
+          total: "0",
           next: "",
-          total: calculate({ total, next, buttonName }, buttonName),
           operation: "",
         });
       }
-    } else if (buttonName === "AC") {
-      console.log(`Clicked: ${buttonName}`);
-      return this.setState({
-        ...this.state,
-        next: "",
-        total: "0",
-        operation: "",
-      });
-    } else {
-      console.log("Not clicked");
-
-      if (operation !== null) {
-        if (next.includes(".") && buttonName === ".") {
+    } else if (digitButton) {
+      console.log(`Clicked AC Button: ${digitButton}`);
+      if (total === null && next === null && operation === null) {
+        return this.setState({
+          ...this.state,
+          next: digitButton,
+          total: total + next === 0 ? "" : total + next,
+          operation: "",
+        });
+      } else if (total === "" && next !== "" && operation === "") {
+        next = next + digitButton;
+        return this.setState({ ...this.state, next: next });
+      } else if (total !== "" && next === "" && operation !== "") {
+        next = next + digitButton;
+        return this.setState({ ...this.state, next: next });
+      } else if (total !== "" && next !== "" && operation !== "") {
+        next = next + digitButton;
+        return this.setState({ ...this.state, next: next });
+      } else if (total !== "" && next === "" && operation === "") {
+        next = digitButton;
+        total = "";
+        return this.setState({ ...this.state, next: next, total: total });
+      }
+    } else if (symbolButton) {
+      console.log(`Clicked symbol Button: ${symbolButton}`);
+      if (symbolButton === ".") {
+        if (total === null && next === null && operation === null) {
+          console.log(`I am on work here today!`);
+          next = "0.";
+          operation = "";
+          total = "";
+          return this.setState({
+            ...this.state,
+            next: next,
+            total: total,
+            operation: operation,
+          });
+        } else if (total !== null && next.includes(".") && operation !== null) {
+          console.log(`I am on work here today!`);
+          return this.setState({ ...this.state });
+        } else if (total !== null && next === "" && operation !== "") {
+          console.log(`I am on work here today!`);
+          next = "0.";
+          return this.setState({ ...this.state, next: next });
+        } else if (total === "0" && next === "" && operation === "") {
+          next = "0.";
+          total = "";
+          return this.setState({ ...this.state, next: next, total: total });
+        } else if (total !== null && next === "" && operation === "") {
+          console.log(`I am on work here today!`);
+          next = "0.";
+          total = "";
+          return this.setState({ ...this.state, next: next, total: total });
+        } else if (next.indexOf(0) !== null) {
+          console.log(`I am on work here today!`);
+          next = next + ".";
+          return this.setState({ ...this.state, next: next });
+        }
+      } else if (symbolButton === "+/-") {
+        if (total === null && next === null && operation === null) {
+          console.log(`I am on work here today!`);
+          return this.setState({ ...this.state });
+        }
+        if (total !== "" && next === "" && operation !== "") {
+          console.log(`I am on work here today!`);
+          return this.setState({ ...this.state });
+        } else if (total !== "" && next !== "" && operation !== "") {
+          console.log(`I am on work here today!`);
+          total = next; // We use the current next(second operand) as total in calculate method below
+          operation = symbolButton;
+          next = calculate({ total, next, operation }, symbolButton);
+          return this.setState({ ...this.state, next: next });
+        } else if (total !== "" && next === "" && operation === "") {
+          operation = symbolButton;
+          total = calculate({ total, next, operation }, operation);
+          operation = "";
+          return this.setState({
+            ...this.state,
+            next: next,
+            total: total,
+            operation: operation,
+          });
+        } else if (total === "" && next !== "" && operation === "") {
+          console.log(`I am on work here today!`);
+          total = next;
+          operation = symbolButton;
+          next = calculate({ total, next, operation }, operation);
+          total = "";
+          operation = "";
+          return this.setState({ ...this.state, next: next });
+        }
+      } else if (symbolButton === "%") {
+        console.log(`I am on work here today!`);
+        if (total === null && next === null && operation === null) {
+          return this.setState({ ...this.state });
+        }
+        if (total === "" && operation === "" && next !== "") {
+          console.log(`I am on work here today!`);
+          total = next;
+          operation = symbolButton;
+          total = calculate({ total, next, operation }, operation);
+          operation = "";
+          next = "";
+          console.log(`total = ${total} I have seen you here`);
+          return this.setState({
+            ...this.state,
+            next: next,
+            total: total,
+            operation: operation,
+          });
+        } else if (total !== "" && next !== "" && operation !== "") {
+          total = next;
+          console.log(`The state total is ${this.state.total}`);
+          operation = symbolButton;
+          next = calculate({ total, next, operation }, operation);
+          console.log(`Next = ${next}`);
+          return this.setState({ ...this.state, next: next });
+        } else if (total !== "" && next === "" && operation !== "") {
+          console.log(`checked in here!`);
+          return this.setState({ ...this.state });
+        } else if (total !== "" && next === "" && operation === "") {
+          operation = symbolButton;
+          total = calculate({ total, next, operation }, operation);
+          operation = "";
           return this.setState({
             ...this.state,
             next: next,
@@ -388,42 +168,69 @@ export default class App extends Component {
             operation: operation,
           });
         }
-        // this.setState({...this.state, next: next})
-        // console.log("this is where I am");
-        if (next !== null && buttonName !== ".") {
-          console.log("I am actually here");
-          next = next + buttonName;
-          return this.setState({ ...this.state, next: next });
+      } else if (symbolButton === "=") {
+        console.log(`I am on work here today!`);
+        if (total === null && next === null && operation === null) {
+          return this.setState({ ...this.state });
         }
-        if (next.indexOf(0) === 0 && buttonName === ".") {
-          console.log(`Zero point!`);
-          next = next + ".";
-          return this.setState({ ...this.state, next: next });
+        if (total !== "" && next === "" && operation !== "") {
+          return this.setState({ ...this.state });
+        } else if (total === "" && next !== "" && operation === "") {
+          return this.setState({ ...this.state });
+        } else if (total !== "" && next === "" && operation === "") {
+          return this.setState({ ...this.state });
         }
-        if (next.indexOf(0) === 0 && buttonName !== ".") {
-          console.log("First");
-          next = buttonName;
-          return this.setState({ ...this.state, next: next });
+        console.log(`Clicked: ${buttonName} button`);
+        console.log(calculate({ total, next, operation }, operation));
+
+        return this.setState({
+          ...this.state,
+          next: "",
+          total: calculate({ total, next, operation }, operation),
+          operation: "",
+        });
+      } else { // symbolButton === operation button
+        console.log(`I am on work here today!`);
+        if (total === null && next === null && operation === null) {
+          return this.setState({ ...this.state });
         }
-        if (next.indexOf(0) !== null && buttonName === ".") {
-          console.log("Second");
-          next = next + ".";
-          return this.setState({ ...this.state, next: next });
+        if (total !== "" && next !== "" && operation !== "") {
+          total = calculate({ total, next, operation }, operation);
+          console.log("Total is evaluated! Total = " + total);
+          next = "";
+          operation = symbolButton;
+          console.log("I have also reached here!");
+          return this.setState({
+            ...this.state,
+            next: next,
+            total: total,
+            operation: operation,
+          });
+        } else if (total !== "" && next === "" && operation !== "") {
+          return this.setState({ ...this.state });
+        } else if (total !== "" && next === "" && operation === "") {
+          console.log(`Yes I am here!!`);
+          operation = symbolButton;
+          return this.setState({
+            ...this.state,
+            operation: operation,
+          });
+        } else if (total === "" && next !== "" && operation === "") {
+          console.log(`Hey`);
+          total = next;
+          next = "";
+          operation = symbolButton;
+          return this.setState({
+            ...this.state,
+            next: next,
+            total: total,
+            operation: operation,
+          });
         }
-        console.log("I have also passed here!");
-        next = next + buttonName;
-        return this.setState({ ...this.state, next: next });
-      }
-      console.log("No I am here instead");
-      return this.setState({
-        ...this.state,
-        next: buttonName,
-        total: total + next === 0 ? "" : total + next,
-        operation: "",
-      });
-    }
-    console.log(`Clicked button: ${buttonName}`);
+      } // end of operation button
+    } // end of symbolButton block  
   }
+  
   render() {
     return (
       <div className="App">
