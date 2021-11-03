@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import "../App.css";
 import ButtonPanel from "./ButtonPanel";
 import Display from "./Display";
-import calculate from "../logic/calculate";
+import Header from "./Header";
+import clickedButton from "../logic/clickedButton";
 
 export default class App extends Component {
   constructor(props) {
@@ -13,228 +14,156 @@ export default class App extends Component {
       next: null,
       operation: null,
     };
-
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(buttonName) {
     let { total, next, operation } = this.state;
-    const regexpClickedDigit = /\d/;
-    const regexClickedAC = /^A\w\b/;
-    const digitButton = buttonName.match(regexpClickedDigit);
-    const acButton = buttonName.match(regexClickedAC);
-    const symbolButton = !digitButton && !acButton ? buttonName : null;
 
-    if (acButton) {
-      console.log(`Clicked AC Button: ${acButton}`);
-      if (total === null && next === null && operation === null) {
-        return this.setState({ ...this.state });
-      } else {
-        return this.setState({
-          ...this.state,
-          total: "0",
-          next: "",
-          operation: "",
-        });
-      }
-    } else if (digitButton) {
-      console.log(`Clicked AC Button: ${digitButton}`);
-      if (total === null && next === null && operation === null) {
-        return this.setState({
-          ...this.state,
-          next: digitButton,
-          total: total + next === 0 ? "" : total + next,
-          operation: "",
-        });
-      } else if (total === "" && next !== "" && operation === "") {
-        next = next + digitButton;
-        return this.setState({ ...this.state, next: next });
-      } else if (total !== "" && next === "" && operation !== "") {
-        next = next + digitButton;
-        return this.setState({ ...this.state, next: next });
-      } else if (total !== "" && next !== "" && operation !== "") {
-        next = next + digitButton;
-        return this.setState({ ...this.state, next: next });
-      } else if (total !== "" && next === "" && operation === "") {
-        next = digitButton;
-        total = "";
-        return this.setState({ ...this.state, next: next, total: total });
-      }
-    } else if (symbolButton) {
-      console.log(`Clicked symbol Button: ${symbolButton}`);
-      if (symbolButton === ".") {
-        if (total === null && next === null && operation === null) {
-          console.log(`I am on work here today!`);
-          next = "0.";
-          operation = "";
-          total = "";
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        } else if (total !== null && next.includes(".") && operation !== null) {
-          console.log(`I am on work here today!`);
-          return this.setState({ ...this.state });
-        } else if (total !== null && next === "" && operation !== "") {
-          console.log(`I am on work here today!`);
-          next = "0.";
-          return this.setState({ ...this.state, next: next });
-        } else if (total === "0" && next === "" && operation === "") {
-          next = "0.";
-          total = "";
-          return this.setState({ ...this.state, next: next, total: total });
-        } else if (total !== null && next === "" && operation === "") {
-          console.log(`I am on work here today!`);
-          next = "0.";
-          total = "";
-          return this.setState({ ...this.state, next: next, total: total });
-        } else if (next.indexOf(0) !== null) {
-          console.log(`I am on work here today!`);
-          next = next + ".";
-          return this.setState({ ...this.state, next: next });
-        }
-      } else if (symbolButton === "+/-") {
-        if (total === null && next === null && operation === null) {
-          console.log(`I am on work here today!`);
-          return this.setState({ ...this.state });
-        }
-        if (total !== "" && next === "" && operation !== "") {
-          console.log(`I am on work here today!`);
-          return this.setState({ ...this.state });
-        } else if (total !== "" && next !== "" && operation !== "") {
-          console.log(`I am on work here today!`);
-          total = next; // We use the current next(second operand) as total in calculate method below
-          operation = symbolButton;
-          next = calculate({ total, next, operation }, symbolButton);
-          return this.setState({ ...this.state, next: next });
-        } else if (total !== "" && next === "" && operation === "") {
-          operation = symbolButton;
-          total = calculate({ total, next, operation }, operation);
-          operation = "";
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        } else if (total === "" && next !== "" && operation === "") {
-          console.log(`I am on work here today!`);
-          total = next;
-          operation = symbolButton;
-          next = calculate({ total, next, operation }, operation);
-          total = "";
-          operation = "";
-          return this.setState({ ...this.state, next: next });
-        }
-      } else if (symbolButton === "%") {
-        console.log(`I am on work here today!`);
-        if (total === null && next === null && operation === null) {
-          return this.setState({ ...this.state });
-        }
-        if (total === "" && operation === "" && next !== "") {
-          console.log(`I am on work here today!`);
-          total = next;
-          operation = symbolButton;
-          total = calculate({ total, next, operation }, operation);
-          operation = "";
-          next = "";
-          console.log(`total = ${total} I have seen you here`);
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        } else if (total !== "" && next !== "" && operation !== "") {
-          total = next;
-          console.log(`The state total is ${this.state.total}`);
-          operation = symbolButton;
-          next = calculate({ total, next, operation }, operation);
-          console.log(`Next = ${next}`);
-          return this.setState({ ...this.state, next: next });
-        } else if (total !== "" && next === "" && operation !== "") {
-          console.log(`checked in here!`);
-          return this.setState({ ...this.state });
-        } else if (total !== "" && next === "" && operation === "") {
-          operation = symbolButton;
-          total = calculate({ total, next, operation }, operation);
-          operation = "";
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        }
-      } else if (symbolButton === "=") {
-        console.log(`I am on work here today!`);
-        if (total === null && next === null && operation === null) {
-          return this.setState({ ...this.state });
-        }
-        if (total !== "" && next === "" && operation !== "") {
-          return this.setState({ ...this.state });
-        } else if (total === "" && next !== "" && operation === "") {
-          return this.setState({ ...this.state });
-        } else if (total !== "" && next === "" && operation === "") {
-          return this.setState({ ...this.state });
-        }
-        console.log(`Clicked: ${buttonName} button`);
-        console.log(calculate({ total, next, operation }, operation));
+   this.setState({...clickedButton(buttonName, {total: total, next: next, operation: operation})})
+    // const regexpClickedDigit = /\d/;
+    // const regexClickedAC = /^A\w\b/;
+    // const digitButton = buttonName.match(regexpClickedDigit);
+    // const acButton = buttonName.match(regexClickedAC);
+    // const symbolButton = !digitButton && !acButton ? buttonName : null;
 
-        return this.setState({
-          ...this.state,
-          next: "",
-          total: calculate({ total, next, operation }, operation),
-          operation: "",
-        });
-      } else { // symbolButton === operation button
-        console.log(`I am on work here today!`);
-        if (total === null && next === null && operation === null) {
-          return this.setState({ ...this.state });
-        }
-        if (total !== "" && next !== "" && operation !== "") {
-          total = calculate({ total, next, operation }, operation);
-          console.log("Total is evaluated! Total = " + total);
-          next = "";
-          operation = symbolButton;
-          console.log("I have also reached here!");
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        } else if (total !== "" && next === "" && operation !== "") {
-          return this.setState({ ...this.state });
-        } else if (total !== "" && next === "" && operation === "") {
-          console.log(`Yes I am here!!`);
-          operation = symbolButton;
-          return this.setState({
-            ...this.state,
-            operation: operation,
-          });
-        } else if (total === "" && next !== "" && operation === "") {
-          console.log(`Hey`);
-          total = next;
-          next = "";
-          operation = symbolButton;
-          return this.setState({
-            ...this.state,
-            next: next,
-            total: total,
-            operation: operation,
-          });
-        }
-      } // end of operation button
-    } // end of symbolButton block  
-  }
-  
+  //   if (acButton) {
+  //     console.log(`Clicked AC Button: ${acButton}`);
+  //     return this.setState({
+  //       ...this.state,
+  //       total: "0",
+  //       next: "",
+  //       operation: "",
+  //     });
+  //   } else if (digitButton) {
+  //     if (next) {
+  //       if (next.indexOf("0") !== 0) {
+  //         next = next + digitButton;
+  //         console.log(`We are here!!`);
+  //       } else if (next === "0.") {
+  //         next = "0." + digitButton;
+  //       } else if (next.indexOf("0") === 0 && next.length === 1) {
+  //         console.log(`The problem is here!!`);
+  //         next = digitButton;
+  //       } else {
+  //         console.log(`Here is the solution`);
+  //         next = next + digitButton;
+  //       }
+  //       return this.setState({ ...this.state, next: next });
+  //     } else if (total) {
+  //       console.log(`very cool!!`);
+  //       return operation
+  //         ? this.setState({ ...this.state, next: digitButton })
+  //         : this.setState({ ...this.state, next: digitButton, total: "" });
+  //     }
+  //     console.log(`This is starting point`);
+  //     return this.setState({
+  //       ...this.state,
+  //       next: digitButton,
+  //       total: "",
+  //       // total: total + next === 0 ? "" : total + next,
+  //       operation: "",
+  //     });
+  //   } else if (symbolButton) {
+  //     console.log(`Clicked symbol Button: ${symbolButton}`);
+  //     if (next) {
+  //       switch (symbolButton) {
+  //         case ".":
+  //           next = next.includes(".") ? next : next + ".";
+  //           this.setState({ ...this.state, next: next });
+  //           break;
+  //         case "%":
+  //         case "+/-":
+  //           console.log(`Dealing with operation`);
+  //           total = next;
+  //           operation = symbolButton;
+  //           next = calculate({ total, next, operation }, operation);
+  //           this.setState({ ...this.state, next: next });
+  //           break;
+  //         case "=":
+  //           if (total) {
+  //             total = calculate({ total, next, operation }, operation);
+  //             next = "";
+  //             operation = "";
+  //             this.setState({
+  //               ...this.state,
+  //               next: next,
+  //               total: total,
+  //               operation: operation,
+  //             });
+  //           }
+  //           break;
+  //         default:
+  //           // operation = symbolButton;
+  //           total = total
+  //             ? calculate({ total, next, operation }, operation)
+  //             : next;
+  //           next = "";
+  //           operation = symbolButton;
+  //           console.log("I have also reached here!");
+  //           this.setState({
+  //             ...this.state,
+  //             next: next,
+  //             total: total,
+  //             operation: operation,
+  //           });
+  //       }
+  //       console.log(`State is returned here!!`);
+  //       return this.state;
+  //     } else if (total) {
+  //       switch (symbolButton) {
+  //         case ".":
+  //           if (!operation) {
+  //             console.log(typeof total);
+  //             next = "0.";
+  //             total = "";
+  //             this.setState({ ...this.state, next: next, total: total });
+  //           } else {
+  //             next = "0.";
+  //             this.setState({ ...this.state, next: next });
+  //           }
+  //           break;
+  //         case "%":
+  //         case "+/-":
+  //           if (!operation && total !== "0") {
+  //             console.log(`Hello here`);
+  //             operation = symbolButton;
+  //             total = calculate({ total, next, operation }, operation);
+  //             operation = "";
+  //             this.setState({
+  //               ...this.state,
+  //               total: total,
+  //               operation: operation,
+  //             });
+  //           }
+  //           break;
+  //         default:
+  //           if (symbolButton !== "=" && !operation) {
+  //             operation = symbolButton;
+  //             this.setState({ ...this.state, operation: operation });
+  //           }
+  //       }
+  //       console.log(`State returned in total territory!!`);
+  //       return this.state;
+  //     } else if (symbolButton === ".") {
+  //       console.log(`I am on work here today!`);
+  //       next = "0.";
+  //       operation = "";
+  //       total = "";
+  //       return this.setState({
+  //         ...this.state,
+  //         next: next,
+  //         total: total,
+  //         operation: operation,
+  //       });
+  //     }
+  //   } // end of symbolButton block
+  } // end handleClick
+
   render() {
     return (
       <div className="App">
-        <h1>Math-Magician</h1>
+        <Header />
         <React.Fragment>
           {this.state.total === null &&
           this.state.next === null &&
