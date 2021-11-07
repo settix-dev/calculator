@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 const Button = ({name, handleClick}) => {
     return (
         <div>
-          <button 
+          <button
           type="button" 
           value={name} 
           onClick={(e) => handleClick(e.target.value)}
